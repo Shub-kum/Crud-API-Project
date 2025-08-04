@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Record Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Student Records</h2>
+      <div class="d-flex justify-content-between mb-4">
+        <input type="text" class="form-control w-50" placeholder="Search..." id="searchInput">
+        <button class="btn btn-secondary" onclick="fetchStudents()">Refresh</button>
+        <button class="btn btn-danger" onclick="logout()">Logout</button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">Add Student</button>
+      </div>
+    </div>
+
+    <!-- Student Table -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Profile</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Gender</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          <!-- Sample Row -->
+         
+        </tbody>
+      </table>
+    </div>
+    <nav>
+      <ul class="pagination justify-content-center"id="pagination"></ul>
+    </nav>
+  </div>
+
+  <!-- View table -->
+  
+  <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="studentModalLabel">Student Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+        <img id="profileImage" class="rounded mb-3" width="100px">
+        <p><strong>Name:</strong>  <span id="viewName"></span></p>
+        <p><strong>Email:</strong> <span id="viewEmail"></span></p>
+        <p><strong>Phone:</strong> <span id="viewPhone"></span></p>
+        <p><strong>Gender:</strong> <span id="viewGender"></span></p>
+      </div>
+      
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div> -->
+
+    </div>
+  </div>
+</div>
+  
+  <!--  close -->
+
+
+  <!-- Edit table-->
+
+
+<!-- Edit Student Modal -->
+<!-- Edit Student Modal -->
+<div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editStudentForm" autocomplete="off"> <!-- globally disable unless specified -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="editStudentModalLabel">Edit Student</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body row g-3">
+          <input type="hidden" id="editStudentId" name="id" autocomplete="off">
+
+          <div class="col-md-6">
+            <label for="editFirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="editFirstName" name="firstName" autocomplete="given-name" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editLastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="editLastName" name="lastName" autocomplete="family-name" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="editEmail" name="email" autocomplete="email" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editPhone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="editPhone" name="phone" autocomplete="tel" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editGender" class="form-label">Gender</label>
+            <select class="form-select" id="editGender" name="gender" autocomplete="sex" required>
+              <option value="" disabled selected>Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="editProfilePic" class="form-label">Profile Picture URL</label>
+            <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/*" autocomplete="off"> <!-- Profile image typically doesn't need autocomplete -->
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  <!-- close -->
+  
+  
+
+  <!-- Add Student Modal -->
+  <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="addStudentForm" enctype="multipart/form-data" autocomplete="on"> 
+        <div class="modal-header">
+          <h5 class="modal-title" id="addStudentModalLabel">Add New Student</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body row g-3">
+          <div class="col-md-6">
+            <label class="form-label">First Name</label>
+            <input name="first_name" placeholder="First Name"class="form-control" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Last Name</label>
+            <input name="last_name" placeholder="Last Name"class="form-control" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input name="email" type="email" placeholder="Email"class="form-control" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input name="phone" type="tel" placeholder="Phone"class="form-control" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Gender</label>
+            <select name="gender"class="form-control" required>
+              <option value="">Select Gender</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+                </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Upload Pic</label>
+            <input name="profile_pic" type="file" accept="image/*"class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Create Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const apiUrl = "http://localhost:8080/api/students"
+
+    let currentPage = 1
+    let currentSearch = ''
+
+    function checkAuth(){
+      const token = localStorage.getItem("token")
+      if(!token){
+        window.location.href = "login.html"
+      }
+      return token
+    }
+
+    const token = checkAuth()
+
+    // View all student
+  async function fetchStudents(search = '',page = 1){
+    currentPage = page
+     currentSearch = search
+
+      const res = await fetch(
+        `${apiUrl}?search=${encodeURIComponent(search)}&page=${page}&limit=4`,
+      
+        {
+          headers: {"Authorization": `Bearer ${token}`}
+        }
+      ) 
+      const data = await res.json()
+      // console.log(data)
+
+      const tbody = document.querySelector("#studentTableBody")
+      tbody.innerHTML = ''
+
+      data.students.forEach(student => {
+        tbody.innerHTML += `
+
+           <tr>
+            <td><img src="http://localhost:8080/uploads/${student.profile_pic}"height="50px" width="50px" class="rounded-circle "/></td>
+            <td>${student.first_name}</td>
+            <td>${student.last_name}</td>
+            <td>${student.email}</td>
+            <td>${student.phone}</td>
+            <td>${student.gender}</td>
+            <td>
+              <button class="btn btn-info btn-sm"onclick="viewStudent('${student._id}')">View</button>
+              <button class="btn btn-warning btn-sm"onclick="editStudent('${student._id}')">Edit</button>
+              <button class="btn btn-danger btn-sm"onclick="deleteStudent('${student._id}')">Delete</button>
+            </td>
+          </tr>
+
+        `
+      });
+
+      renderPagination(data.totalPage)
+
+    }
+    fetchStudents()
+
+    function renderPagination(totalPage){
+    
+    const container = document.querySelector("#pagination")
+    container.innerHTML= ''
+
+    //Previous btn
+      const prevli = document.createElement("li")
+      prevli.className = 'page-item' + (currentPage === 1 ? ' disabled' : '')
+      prevli.innerHTML = `<a class="page-link" href="#">Privious</a>`
+      prevli.addEventListener("click", (e) =>{
+        e.preventDefault()
+        fetchStudents(currentSearch, currentPage - 1)
+      })
+      container.appendChild(prevli)
+
+
+    for(let i = 1; i <= totalPage; i++){
+      const li = document.createElement("li")
+      li.className = 'page-item' + (i === currentPage ? ' active' : '')
+      li.innerHTML = `<a class="page-link" href="#">${i}</a>`
+      li.addEventListener("click", (e) =>{
+        e.preventDefault()
+        fetchStudents(currentSearch, i)
+      })
+      container.appendChild(li)
+    }
+
+    //Next btn
+      const nextli = document.createElement("li")
+      nextli.className = 'page-item' + (currentPage === totalPage ? ' disabled' : '')
+      nextli.innerHTML = `<a class="page-link" href="#">Next</a>`
+      nextli.addEventListener("click", (e) =>{
+        e.preventDefault()
+        fetchStudents(currentSearch, currentPage + 1)
+      })
+      container.appendChild(nextli)
+
+
+    }
+
+    async function viewStudent(id){
+      const res = await fetch(
+      `${apiUrl}/${id}`,
+    
+        {
+          headers: {"Authorization": `Bearer ${token}`}
+        }
+    
+    ) 
+      const student = await res.json()
+      // console.log(data)
+
+      document.querySelector("#profileImage").src=`http://localhost:8080/uploads/${student.profile_pic}`
+      document.querySelector("#viewName").textContent=`${student.first_name} ${student.last_name}`
+      document.querySelector("#viewEmail").textContent= student.email
+      document.querySelector("#viewPhone").textContent= student.phone 
+      document.querySelector("#viewGender").textContent= student.gender 
+      
+      new bootstrap.Modal(document.querySelector("#studentModal")).show()
+
+    }
+//Search student
+    document.querySelector("#searchInput").addEventListener("input",() =>{
+      currentPage = 1
+      fetchStudents(document.querySelector("#searchInput").value, currentPage)
+    })
+  
+// add student
+document.querySelector("#addStudentForm").addEventListener("submit",async function (e){
+   e.preventDefault() 
+  const formData = new FormData(this)
+
+  const reu = await fetch(`${apiUrl}`,{
+    method : 'POST',
+    body : formData,
+    headers: {"Authorization": `Bearer ${token}`}
+  })
+
+  if(reu.ok){
+    this.reset()
+    bootstrap.Modal.getInstance(document.querySelector("#addStudentModal")).hide()
+    fetchStudents()
+  }
+  else{
+    alert("Error creating student.")
+  }
+    })
+
+//Delete student
+
+async function deleteStudent(id){
+if(confirm("Are your sure delete this student 🤔")){
+  await fetch(`${apiUrl}/${id}`,
+  {
+    
+    method : 'DELETE',
+    headers: {"Authorization": `Bearer ${token}`}
+
+  })
+  fetchStudents()
+}
+}
+
+//Update student
+
+async function editStudent(id){
+
+  const res =  await fetch(
+    `${apiUrl}/${id}`,
+
+        {
+          headers: {"Authorization": `Bearer ${token}`}
+        }
+  )
+  const student = await res.json()
+
+  document.querySelector("#editStudentId").value= student._id
+  document.querySelector("#editFirstName").value= student.first_name
+  document.querySelector("#editLastName").value= student.last_name
+  document.querySelector("#editEmail").value= student.email
+  document.querySelector("#editPhone").value= student.phone
+  document.querySelector("#editGender").value= student.gender
+
+new bootstrap.Modal(document.querySelector("#editStudentModal")).show()
+
+}
+
+//Update student record
+
+document.querySelector("#editStudentForm").addEventListener("submit",async function (e){
+   e.preventDefault() 
+
+   const id = document.querySelector("#editStudentId").value
+
+   const formData = new FormData(this)
+
+  const reu = await fetch(`${apiUrl}/${id}`, {
+    method : 'PUT',
+    body : formData,
+    headers: {"Authorization": `Bearer ${token}`}
+  })
+
+  if(reu.ok){
+    bootstrap.Modal.getInstance(document.querySelector("#editStudentModal")).hide()
+    fetchStudents()
+  }
+  else{
+    alert("Error updating student.")
+  }
+})
+
+//Logout
+
+function logout(){
+  localStorage.removeItem("token")
+  window.location.href = "login.html"
+
+}
+
+</script>
+
+</body>
+</html>
